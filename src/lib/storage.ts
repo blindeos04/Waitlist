@@ -1,10 +1,7 @@
-import fs from "fs";
-import path from "path";
-
-const DATA_FILE = path.join(process.cwd(), "data", "applicants.json");
+import { supabase } from "./supabase";
 
 export interface Applicant {
-    id: string;
+    id?: string;
     fullName: string;
     email: string;
     website: string;
@@ -12,41 +9,56 @@ export interface Applicant {
     bottleneck: string;
     whatsapp?: string;
     status: "new" | "reviewed" | "approved";
-    timestamp: string;
+    timestamp?: string; // Supabase handles 'created_at' usually, but we keep this for type compat
 }
 
-function ensureDataFile() {
-    const dir = path.dirname(DATA_FILE);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+export async function saveApplicant(applicant: Omit<Applicant, "id" | "timestamp" | "status">) {
+    const { data, error } = await supabase
+        .from("waitlist")
+        .insert([
+            {
+                fullName: applicant.fullName,
+                email: applicant.email,
+                website: applicant.website,
+                revenue_range: applicant.revenueRange, // Maps to DB column snake_case usually
+                bottleneck: applicant.bottleneck,
+                whatsapp: applicant.whatsapp,
+                status: "new",
+            },
+        ])
+        .select();
+
+    if (error) {
+        console.error("Supabase error:", error);
+        throw new Error("Failed to save applicant");
     }
-    if (!fs.existsSync(DATA_FILE)) {
-        fs.writeFileSync(DATA_FILE, JSON.stringify([]), "utf-8");
-    }
+
+    return data;
 }
 
-export function saveApplicant(applicant: Omit<Applicant, "id" | "timestamp" | "status">) {
-    ensureDataFile();
-    const applicants = getApplicants();
+export async function getApplicants(): Promise<Applicant[]> {
+    const { data, error } = await supabase
+        .from("waitlist")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    const newApplicant: Applicant = {
-        ...applicant,
-        id: crypto.randomUUID(),
-        status: "new",
-        timestamp: new Date().toISOString(),
-    };
-
-    applicants.push(newApplicant);
-    fs.writeFileSync(DATA_FILE, JSON.stringify(applicants, null, 2), "utf-8");
-    return newApplicant;
-}
-
-export function getApplicants(): Applicant[] {
-    ensureDataFile();
-    const data = fs.readFileSync(DATA_FILE, "utf-8");
-    try {
-        return JSON.parse(data);
-    } catch (error) {
+    if (error) {
+        console.error("Supabase error:", error);
         return [];
     }
+
+    // Map back to camelCase if DB is snake_case (typical Supabase pattern)
+    // Assuming DB has: full_name, revenue_range, etc. or just storing mixed.
+    // simpler to map:
+    return (data || []).map((row: any) => ({
+        id: row.id,
+        fullName: row.fullName || row.full_name,
+        email: row.email,
+        website: row.website,
+        revenueRange: row.revenue_range || row.revenueRange,
+        bottleneck: row.bottleneck,
+        whatsapp: row.whatsapp,
+        status: row.status,
+        timestamp: row.created_at,
+    }));
 }

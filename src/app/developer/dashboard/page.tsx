@@ -13,7 +13,7 @@ export default async function DeveloperDashboard() {
         redirect("/developer/login");
     }
 
-    const applicants = getApplicants();
+    const applicants = await getApplicants();
 
     return (
         <div className="min-h-screen bg-background p-8">
@@ -64,7 +64,7 @@ export default async function DeveloperDashboard() {
                                                 </a>
                                             </td>
                                             <td className="px-6 py-4 text-muted-foreground">
-                                                {new Date(app.timestamp).toLocaleDateString()}
+                                                {new Date(app.timestamp || new Date()).toLocaleDateString()}
                                             </td>
                                         </tr>
                                     ))

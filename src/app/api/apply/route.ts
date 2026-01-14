@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             );
         }
 
-        saveApplicant({
+        await saveApplicant({
             fullName,
             email,
             website,

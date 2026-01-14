@@ -4,11 +4,35 @@ import { Container } from "@/components/ui/Container";
 import Link from "next/link";
 import { motion, useAnimation } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Hero() {
     const [btnText, setBtnText] = useState("Apply for Early Access");
+    const [agencyCount, setAgencyCount] = useState(123);
     const controls = useAnimation();
+
+    // Agency Counter Logic: +1 every 12 hours, reset at 1000
+    useEffect(() => {
+        const baseCount = 123;
+        const maxCount = 1000;
+        const msPerIncrement = 12 * 60 * 60 * 1000; // 12 hours
+        // Use a fixed start date or epoch to keep it consistent across renders/reloads
+        // For simulation, we can use Date.now() but to make it consistent for the user "every 12 hours"
+        // we can just base it on total hours since a fixed epoch.
+        const epoch = new Date("2024-01-01").getTime();
+        const now = Date.now();
+        const diff = now - epoch;
+
+        let increments = Math.floor(diff / msPerIncrement);
+        let currentCount = baseCount + increments;
+
+        // Reset logic: wrap around 1000 back to 123
+        // (currentCount - baseCount) % (maxCount - baseCount) + baseCount
+        const range = maxCount - baseCount;
+        currentCount = baseCount + (increments % range);
+
+        setAgencyCount(currentCount);
+    }, []);
 
     return (
         <section className="relative min-h-screen overflow-hidden bg-[#050508]">
@@ -96,7 +120,7 @@ export function Hero() {
                                 <div key={i} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-primary/40 to-accent/20 border-2 border-[#0a0a0a]" />
                             ))}
                         </div>
-                        <span className="text-[10px] sm:text-sm text-[#666]">127 agencies applied</span>
+                        <span className="text-[10px] sm:text-sm text-[#666]">{agencyCount} agencies joined</span>
                     </div>
                 </motion.div>
 
