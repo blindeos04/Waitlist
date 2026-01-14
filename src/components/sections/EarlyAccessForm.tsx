@@ -140,9 +140,9 @@ export function EarlyAccessForm() {
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                            Work Email <span className="text-accent">*</span>
+                                            Email <span className="text-accent">*</span>
                                         </label>
-                                        <Input id="email" name="email" type="email" required placeholder="john@agency.com" />
+                                        <Input id="email" name="email" type="email" required placeholder="john@gmail.com" />
                                     </div>
                                 </div>
 
@@ -175,9 +175,9 @@ export function EarlyAccessForm() {
 
                                 <div className="space-y-2">
                                     <label htmlFor="whatsapp" className="text-sm font-medium text-foreground">
-                                        WhatsApp Number (Optional)
+                                        WhatsApp Number <span className="text-accent">*</span>
                                     </label>
-                                    <Input id="whatsapp" name="whatsapp" placeholder="+1..." />
+                                    <Input id="whatsapp" name="whatsapp" required placeholder="+1..." />
                                 </div>
 
                                 <Button type="submit" size="lg" className="w-full text-lg h-14 shadow-[0_0_30px_-10px_rgba(128,1,31,0.5)]" disabled={loading}>

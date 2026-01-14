@@ -12,15 +12,15 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
     const [stage, setStage] = useState(0);
 
     useEffect(() => {
-        // Smoother sequence with overlapping fades
+        // Smoother sequence with overlapping cross-fades
         const timers = [
             setTimeout(() => setStage(1), 500),      // BLIND OS fades in
-            setTimeout(() => setStage(2), 3500),     // BLIND OS fades out
-            setTimeout(() => setStage(3), 4200),     // Tagline fades in
-            setTimeout(() => setStage(4), 7000),     // Tagline fades out
-            setTimeout(() => setStage(5), 7800),     // Logo fades in
-            setTimeout(() => setStage(6), 11000),    // Logo animates out
-            setTimeout(() => setStage(7), 12500),    // Complete
+            setTimeout(() => setStage(2), 3800),     // BLIND OS fades out (Extended read time)
+            setTimeout(() => setStage(3), 4500),     // Tagline fades in
+            setTimeout(() => setStage(4), 7500),     // Tagline fades out
+            setTimeout(() => setStage(5), 8200),     // Logo fades in
+            setTimeout(() => setStage(6), 11500),    // Logo animates out
+            setTimeout(() => setStage(7), 13000),    // Complete
         ];
 
         return () => timers.forEach(clearTimeout);
