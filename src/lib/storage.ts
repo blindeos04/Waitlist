@@ -17,7 +17,7 @@ export async function saveApplicant(applicant: Omit<Applicant, "id" | "timestamp
         .from("waitlist")
         .insert([
             {
-                fullName: applicant.fullName,
+                full_name: applicant.fullName,
                 email: applicant.email,
                 website: applicant.website,
                 revenue_range: applicant.revenueRange, // Maps to DB column snake_case usually
